@@ -423,7 +423,7 @@ const ButtonStyles = css<ThemeProp & ButtonProps>`
   }
 `;
 
-const StyledButton = styled("button")`
+export const StyledButton = styled("button")`
   ${ButtonStyles}
 `;
 
