@@ -13,14 +13,14 @@ import {
   CONNECTING_REPO,
   createMessage,
   GENERATE_KEY,
+  IMPORT_BTN_LABEL,
+  IMPORT_FROM_GIT_REPOSITORY,
+  IMPORTING_APP_FROM_GIT,
   LEARN_MORE,
   PASTE_SSH_URL_INFO,
   REMOTE_URL,
   REMOTE_URL_INFO,
   REMOTE_URL_INPUT_PLACEHOLDER,
-  IMPORT_FROM_GIT_REPOSITORY,
-  IMPORT_BTN_LABEL,
-  IMPORTING_APP_FROM_GIT,
   UPDATE_CONFIG,
 } from "@appsmith/constants/messages";
 import styled from "styled-components";
@@ -54,11 +54,11 @@ import {
   getGlobalGitConfig,
   getIsFetchingGlobalGitConfig,
   getIsFetchingLocalGitConfig,
+  getIsImportingApplicationViaGit,
   getLocalGitConfig,
   getRemoteUrlDocUrl,
   getTempRemoteUrl,
   getUseGlobalProfile,
-  getIsImportingApplicationViaGit,
 } from "selectors/gitSyncSelectors";
 import Statusbar, {
   StatusbarWrapper,
@@ -164,7 +164,7 @@ function GitConnection({ isImport }: Props) {
   const globalGitConfig = useSelector(getGlobalGitConfig);
   const localGitConfig = useSelector(getLocalGitConfig);
   const { tempRemoteUrl = "" } = useSelector(getTempRemoteUrl) || ({} as any);
-  const curApplication = useSelector(getCurrentApplication);
+  const currentApp = useSelector(getCurrentApplication);
   const isFetchingGlobalGitConfig = useSelector(getIsFetchingGlobalGitConfig);
   const isFetchingLocalGitConfig = useSelector(getIsFetchingLocalGitConfig);
   const { remoteUrl: remoteUrlInStore = "" } =
@@ -376,8 +376,8 @@ function GitConnection({ isImport }: Props) {
     dispatch(setIsGitSyncModalOpen({ isOpen: false }));
     dispatch(
       setDisconnectingGitApplication({
-        id: curApplication?.id || "",
-        name: curApplication?.name || "",
+        id: currentApp?.id || "",
+        name: currentApp?.name || "",
       }),
     );
     dispatch(setIsDisconnectGitModalOpen(true));
@@ -530,7 +530,11 @@ function GitConnection({ isImport }: Props) {
               />
             )}
             {!(isConnectingToGit || isImportingApplicationViaGit) && (
-              <GitConnectError />
+              <GitConnectError
+                onClose={() => {
+                  setRemoteUrl("");
+                }}
+              />
             )}
           </ButtonContainer>
         </>

@@ -21,6 +21,7 @@ import { get } from "lodash";
 import { GitSyncModalTab } from "entities/GitSync";
 import { createMessage, GIT_IMPORT } from "@appsmith/constants/messages";
 import AnalyticsUtil from "utils/AnalyticsUtil";
+import { Colors } from "../../../constants/Colors";
 
 const StyledDialog = styled(Dialog)`
   .bp3-dialog-body {
@@ -53,6 +54,10 @@ const CloseBtnContainer = styled.div`
   top: 0;
   padding: ${(props) => props.theme.spaces[1]}px;
   border-radius: ${(props) => props.theme.radii[1]}px;
+
+  &:hover svg path {
+    fill: ${Colors.GREY_900};
+  }
 `;
 
 const ComponentsByTab = {

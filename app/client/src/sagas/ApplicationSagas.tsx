@@ -7,22 +7,22 @@ import {
 import ApplicationApi, {
   ApplicationObject,
   ApplicationPagePayload,
+  ApplicationResponsePayload,
   ChangeAppViewAccessRequest,
   CreateApplicationRequest,
   CreateApplicationResponse,
   DeleteApplicationRequest,
   DuplicateApplicationRequest,
+  FetchApplicationResponse,
+  FetchUnconfiguredDatasourceListResponse,
   FetchUsersApplicationsOrgsResponse,
   ForkApplicationRequest,
+  ImportApplicationRequest,
   OrganizationApplicationObject,
   PublishApplicationRequest,
   PublishApplicationResponse,
   SetDefaultPageRequest,
   UpdateApplicationRequest,
-  ImportApplicationRequest,
-  FetchApplicationResponse,
-  ApplicationResponsePayload,
-  FetchUnconfiguredDatasourceListResponse,
 } from "api/ApplicationApi";
 import { all, call, put, select, takeLatest } from "redux-saga/effects";
 
@@ -37,25 +37,26 @@ import {
 } from "constants/routes";
 import { AppState } from "reducers";
 import {
-  setDefaultApplicationPageSuccess,
-  resetCurrentApplication,
   FetchApplicationReduxAction,
-  initDatasourceConnectionDuringImportSuccess,
-  importApplicationSuccess,
-  setOrgIdForImport,
-  setIsReconnectingDatasourcesModalOpen,
   getAllApplications,
+  importApplicationSuccess,
+  initDatasourceConnectionDuringImportSuccess,
+  resetCurrentApplication,
+  setDefaultApplicationPageSuccess,
+  setIsReconnectingDatasourcesModalOpen,
+  setOrgIdForImport,
   showReconnectDatasourceModal,
 } from "actions/applicationActions";
 import AnalyticsUtil from "utils/AnalyticsUtil";
 import {
   createMessage,
   DELETING_APPLICATION,
+  DISCARD_SUCCESS,
   DUPLICATING_APPLICATION,
 } from "@appsmith/constants/messages";
 import { Toaster } from "components/ads/Toast";
 import { APP_MODE } from "entities/App";
-import { Organization } from "constants/orgConstants";
+import { Org, Organization } from "constants/orgConstants";
 import { Variant } from "components/ads/common";
 import { AppIconName } from "components/ads/AppIcon";
 import { AppColorCode } from "constants/DefaultTheme";
@@ -73,7 +74,6 @@ import {
   reconnectPageLevelWebsocket,
 } from "actions/websocketActions";
 import { getCurrentOrg } from "selectors/organizationSelectors";
-import { Org } from "constants/orgConstants";
 
 import {
   getCurrentStep,
@@ -163,6 +163,7 @@ export function* publishApplicationSaga(
     });
   }
 }
+
 export function* getAllApplicationSaga() {
   try {
     const response: FetchUsersApplicationsOrgsResponse = yield call(
@@ -223,6 +224,14 @@ export function* fetchApplicationSaga(action: FetchApplicationReduxAction) {
       type: ReduxActionTypes.FETCH_APPLICATION_SUCCESS,
       payload: response.data,
     });
+
+    if (localStorage.getItem("GIT_DISCARD_CHANGES") === "success") {
+      Toaster.show({
+        text: createMessage(DISCARD_SUCCESS),
+        variant: Variant.success,
+      });
+      localStorage.setItem("GIT_DISCARD_CHANGES", "");
+    }
 
     yield put({
       type: ReduxActionTypes.SET_APP_VERSION_ON_WORKER,
