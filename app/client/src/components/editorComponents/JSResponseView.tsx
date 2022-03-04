@@ -34,7 +34,6 @@ import { JSCollectionData } from "reducers/entityReducers/jsActionsReducer";
 import Callout from "components/ads/Callout";
 import { Variant } from "components/ads/common";
 import { EvaluationError } from "utils/DynamicBindingUtils";
-import { Severity } from "entities/AppsmithConsole";
 import { DebugButton } from "./Debugger/DebugCTA";
 import { setCurrentTab } from "actions/debuggerActions";
 import { DEBUGGER_TAB_KEYS } from "./Debugger/helpers";
@@ -215,9 +214,6 @@ function JSResponseView(props: Props) {
       ? responses[currentFunction.id]
 >>>>>>> 08977cabe (js object run functionality)
       : "";
-  const errorsList = errors.filter((er) => {
-    return er.severity === Severity.ERROR;
-  });
 
   const onDebugClick = useCallback(() => {
     AnalyticsUtil.logEvent("OPEN_DEBUGGER", {
@@ -264,7 +260,7 @@ function JSResponseView(props: Props) {
       panelComponent: (
         <>
           <HelpSection>
-            {errorsList.length > 0 ? (
+            {errors.length > 0 ? (
               <StyledCallout
                 fill
                 label={
@@ -279,7 +275,7 @@ function JSResponseView(props: Props) {
               ""
             )}
           </HelpSection>
-          <ResponseTabWrapper className={errorsList.length ? "disable" : ""}>
+          <ResponseTabWrapper className={errors.length ? "disable" : ""}>
             <ResponseViewer>
               {(() => {
                 switch (responseStatus) {
