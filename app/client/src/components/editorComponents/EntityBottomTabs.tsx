@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, RefObject } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setCurrentTab } from "actions/debuggerActions";
 import { TabComponent, TabProp } from "components/ads/Tabs";
@@ -9,6 +9,11 @@ import { DEBUGGER_TAB_KEYS } from "./Debugger/helpers";
 type EntityBottomTabsProps = {
   defaultIndex: number;
   tabs: TabProp[];
+  canCollapse?: boolean;
+  // Reference to container for collapsing or expanding content
+  containerRef?: RefObject<HTMLElement>;
+  // height of container when expanded
+  expandedHeight?: string;
 };
 // Using this if there are debugger related tabs
 function EntityBottomTabs(props: EntityBottomTabsProps) {
@@ -41,6 +46,9 @@ function EntityBottomTabs(props: EntityBottomTabsProps) {
 
   return (
     <TabComponent
+      canCollapse={props.canCollapse}
+      containerRef={props.containerRef}
+      expandedHeight={props.expandedHeight}
       onSelect={onTabSelect}
       selectedIndex={selectedIndex}
       tabs={props.tabs}

@@ -39,12 +39,8 @@ import { setCurrentTab } from "actions/debuggerActions";
 import { DEBUGGER_TAB_KEYS } from "./Debugger/helpers";
 import EntityBottomTabs from "./EntityBottomTabs";
 import Icon from "components/ads/Icon";
-<<<<<<< HEAD
-import { ReactComponent as FunctionSettings } from "assets/icons/menu/settings.svg";
-import JSFunctionSettings from "pages/Editor/JSEditor/JSFunctionSettings";
-import FlagBadge from "components/utils/FlagBadge";
-=======
->>>>>>> 08977cabe (js object run functionality)
+import { TAB_MIN_HEIGHT } from "components/ads/Tabs";
+import { theme } from "constants/DefaultTheme";
 
 const ResponseContainer = styled.div`
   ${ResizerCSS}
@@ -52,7 +48,7 @@ const ResponseContainer = styled.div`
   height: ${(props) => props.theme.actionsBottomTabInitialHeight};
   width: 100%;
   // Minimum height of bottom tabs as it can be resized
-  min-height: 36px;
+  min-height: ${() => TAB_MIN_HEIGHT};
   background-color: ${(props) => props.theme.colors.apiPane.responseBody.bg};
 
   .react-tabs__tab-panel {
@@ -73,50 +69,6 @@ const ResponseTabWrapper = styled.div`
   }
 `;
 
-<<<<<<< HEAD
-const ResponseTabActionsList = styled.ul`
-  height: 100%;
-  width: 20%;
-  list-style: none;
-  padding-left: 0;
-  ${thinScrollbar};
-  scrollbar-width: thin;
-  overflow: auto;
-  padding-bottom: 40px;
-  margin-top: 0;
-`;
-
-const ResponseTabAction = styled.li`
-  padding: 10px 0px 10px 20px;
-  display: flex;
-  align-items: center;
-  &:hover {
-    cursor: pointer;
-    background-color: #f0f0f0;
-  }
-  .function-name {
-    margin-left: 5px;
-    display: inline-block;
-    flex: 1;
-  }
-  .function-actions {
-    margin-left: auto;
-    order: 2;
-    svg {
-      display: inline-block;
-    }
-  }
-  .run-button {
-    margin: 0 15px;
-    margin-left: 10px;
-  }
-  &.active {
-    background-color: #f0f0f0;
-  }
-`;
-
-=======
->>>>>>> 08977cabe (js object run functionality)
 const TabbedViewWrapper = styled.div`
   height: 100%;
 
@@ -206,13 +158,8 @@ function JSResponseView(props: Props) {
   const panelRef: RefObject<HTMLDivElement> = useRef(null);
   const dispatch = useDispatch();
   const response =
-<<<<<<< HEAD
-    selectActionId && selectActionId in responses
-      ? responses[selectActionId]
-=======
     currentFunction && currentFunction.id && currentFunction.id in responses
       ? responses[currentFunction.id]
->>>>>>> 08977cabe (js object run functionality)
       : "";
 
   const onDebugClick = useCallback(() => {
@@ -222,19 +169,6 @@ function JSResponseView(props: Props) {
     dispatch(setCurrentTab(DEBUGGER_TAB_KEYS.ERROR_TAB));
   }, []);
 
-<<<<<<< HEAD
-  const [openSettings, setOpenSettings] = useState(false);
-  const [selectedFunction, setSelectedFunction] = useState<
-    undefined | JSAction
-  >(undefined);
-  const isSelectedFunctionAsync = (id: string) => {
-    const jsAction = jsObject.actions.find((action) => action.id === id);
-    if (!!jsAction) {
-      return jsAction?.actionConfiguration.isAsync;
-    }
-    return false;
-  };
-=======
   useEffect(() => {
     if (
       !currentFunction ||
@@ -251,7 +185,6 @@ function JSResponseView(props: Props) {
         setResponseStatus(JSResponseState.ShowResponse);
     }
   }, [currentFunction, showResponse, responses, isExecuting]);
->>>>>>> 08977cabe (js object run functionality)
 
   const tabs = [
     {
@@ -340,7 +273,13 @@ function JSResponseView(props: Props) {
     <ResponseContainer ref={panelRef}>
       <Resizer panelRef={panelRef} />
       <TabbedViewWrapper>
-        <EntityBottomTabs defaultIndex={0} tabs={tabs} />
+        <EntityBottomTabs
+          canCollapse
+          containerRef={panelRef}
+          defaultIndex={0}
+          expandedHeight={theme.actionsBottomTabInitialHeight}
+          tabs={tabs}
+        />
       </TabbedViewWrapper>
     </ResponseContainer>
   );
