@@ -141,7 +141,9 @@ export const Colors = {
   SELECT_COLOR: "#182026",
 
   INPUT_TEXT_DISABLED: "rgba(92, 112, 128, 0.6)",
-  INPUT_DISABLED: "rgba(206, 217, 224, 0.5)", //  Following Design System colors
+  INPUT_DISABLED: "rgba(206, 217, 224, 0.5)",
+
+  //  Following Design System colors
   GREY_1: "#FAFAFA",
   GREY_2: "#F0F0F0",
   GREY_3: "#EBEBEB",
@@ -168,7 +170,9 @@ export const Colors = {
   GREEN_1: "#50AF6C",
   GREEN_2: "#D5EFE3",
   GREEN_3: "#ECF9F3",
-  MASALA: "#43403D", // error warning
+  MASALA: "#43403D",
+
+  // error warning
   CRIMSON: "#D71010",
   ALTO_3: "#D6D6D6",
   YELLOW_LIGHT: "#F4AF0A",
@@ -184,8 +188,12 @@ export const Colors = {
   MINE_SHAFT_2: "#333333",
 
   /* Primary Error */
-  ERROR_600: "#E32525" /* Secondary Error */,
-  ERROR_50: "#FFE9E9" /* RED colors */,
+  ERROR_600: "#E32525",
+
+  /* Secondary Error */
+  ERROR_50: "#FFE9E9",
+
+  /* RED colors */
   RED_50: "#FFEAEC",
   RED_100: "#FFCACE",
   RED_200: "#F09493",
