@@ -81,3 +81,13 @@ export const updateJSFunction = (payload: SetFunctionPropertyPayload) => {
     payload,
   };
 };
+
+export const setActiveJSAction = (payload: {
+  jsCollectionId: string;
+  jsActionId: string;
+}) => {
+  return {
+    type: ReduxActionTypes.SET_ACTIVE_JS_ACTION,
+    payload,
+  };
+};
