@@ -22,7 +22,7 @@ import "codemirror/addon/lint/lint.css";
 import { getDataTreeForAutocomplete } from "selectors/dataTreeSelectors";
 import EvaluatedValuePopup from "components/editorComponents/CodeEditor/EvaluatedValuePopup";
 import { WrappedFieldInputProps } from "redux-form";
-import _, { isNil, isString } from "lodash";
+import _, { isString } from "lodash";
 import {
   DataTree,
   ENTITY_TYPE,
@@ -137,12 +137,14 @@ export type EditorStyleProps = {
 };
 
 export type GutterConfig = {
-  line: (editorValue: string) => number | null;
+  line: number;
   element: HTMLElement;
 };
 
 export type CodeEditorGutter = {
-  gutterConfig: GutterConfig[] | null;
+  getGutterConfig:
+    | ((editorValue: string, cursorLineNumber: number) => GutterConfig | null)
+    | null;
   gutterId: string;
 };
 
@@ -169,8 +171,6 @@ export type EditorProps = EditorStyleProps &
     handleMouseLeave?: () => void;
     // Custom gutter
     customGutter?: CodeEditorGutter;
-    // custom key map
-    customKeyMap?: CustomKeyMap;
   };
 
 type Props = ReduxStateProps &
@@ -268,15 +268,6 @@ class CodeEditor extends Component<Props, State> {
       }
       options.gutters = Array.from(gutters);
 
-      if (this.props.customKeyMap) {
-        options.extraKeys = {
-          ...options.extraKeys,
-          [this.props.customKeyMap.combination]: (cm: CodeMirror.Editor) => {
-            this.props.customKeyMap?.onKeyDown &&
-              this.props.customKeyMap.onKeyDown(cm);
-          },
-        };
-      }
       // Set value of the editor
       const inputValue = getInputValue(this.props.input.value) || "";
       if (this.props.size === EditorSize.COMPACT) {
@@ -304,6 +295,7 @@ class CodeEditor extends Component<Props, State> {
         editor.on("cursorActivity", this.handleCursorMovement);
         editor.on("blur", this.handleEditorBlur);
         editor.on("postPick", () => this.handleAutocompleteVisibility(editor));
+
         if (this.props.height) {
           editor.setSize("100%", this.props.height);
         } else {
@@ -320,7 +312,6 @@ class CodeEditor extends Component<Props, State> {
         );
 
         this.lintCode(editor);
-        this.handleCustomGutters(editor);
       };
 
       // Finally create the Codemirror editor
@@ -361,8 +352,8 @@ class CodeEditor extends Component<Props, State> {
             (hinter) => hinter.update && hinter.update(this.props.dynamicData),
           );
         }
+        this.handleCustomGutter(this.editor, true);
       }
-      this.handleCustomGutters(this.editor);
     });
   }
 
@@ -449,15 +440,23 @@ class CodeEditor extends Component<Props, State> {
     });
   }
 
-  handleCustomGutters = (editor: CodeMirror.Editor) => {
+  handleCustomGutter = (editor: CodeMirror.Editor, focused: boolean) => {
     const { customGutter } = this.props;
     if (!customGutter || !editor) return;
     editor.clearGutter(customGutter.gutterId);
-    customGutter.gutterConfig?.forEach((gutter) => {
-      const lineNumber = gutter.line(editor.getValue());
-      if (isNil(lineNumber)) return;
-      editor.setGutterMarker(lineNumber, customGutter.gutterId, gutter.element);
-    });
+
+    if (focused && customGutter.getGutterConfig) {
+      const gutterConfig = customGutter.getGutterConfig(
+        editor.getValue(),
+        editor.getCursor().line,
+      );
+      if (!gutterConfig) return;
+      editor.setGutterMarker(
+        gutterConfig.line,
+        customGutter.gutterId,
+        gutterConfig.element,
+      );
+    }
   };
 
   handleCursorMovement = (cm: CodeMirror.Editor) => {
@@ -474,6 +473,7 @@ class CodeEditor extends Component<Props, State> {
     } else {
       this.editor.setOption("matchBrackets", false);
     }
+    this.handleCustomGutter(this.editor, true);
   };
 
   handleEditorFocus = (cm: CodeMirror.Editor) => {
@@ -486,12 +486,14 @@ class CodeEditor extends Component<Props, State> {
           (hinter) => hinter.showHint && hinter.showHint(cm, entityInformation),
         );
     }
+    this.handleCustomGutter(this.editor, true);
   };
 
   handleEditorBlur = () => {
     this.handleChange();
     this.setState({ isFocused: false });
     this.editor.setOption("matchBrackets", false);
+    this.handleCustomGutter(this.editor, false);
   };
 
   handleBeforeChange = (

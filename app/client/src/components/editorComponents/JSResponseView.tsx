@@ -243,7 +243,7 @@ function JSResponseView(props: Props) {
                 fill
                 label={
                   <FailedMessage>
-                    <DebugButton onClick={onDebugClick} />
+                    <DebugButton onClick={onDebugClick} type="submit" />
                   </FailedMessage>
                 }
                 text={createMessage(PARSING_ERROR)}
@@ -323,7 +323,6 @@ function JSResponseView(props: Props) {
         <EntityBottomTabs
           containerRef={panelRef}
           defaultIndex={0}
-          expandByDefault
           expandedHeight={theme.actionsBottomTabInitialHeight}
           tabs={tabs}
         />

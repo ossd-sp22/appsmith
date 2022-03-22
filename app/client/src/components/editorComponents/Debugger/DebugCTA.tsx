@@ -136,6 +136,7 @@ function DebugCTA(props: DebugCTAProps) {
 type DebugButtonProps = {
   className?: string;
   onClick: () => void;
+  type?: "submit" | "reset" | "button";
 };
 
 export function DebugButton(props: DebugButtonProps) {
@@ -146,6 +147,7 @@ export function DebugButton(props: DebugButtonProps) {
       onClick={props.onClick}
       tag="button"
       text="Debug"
+      type={props.type}
       variant={Variant.danger}
     />
   );

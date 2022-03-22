@@ -376,8 +376,6 @@ const ICON_LOOKUP = {
   warning: <WarningIcon />,
   widget: <WidgetIcon />,
   workspace: <WorkspaceIcon />,
-  "file-list-line": <FileListLineIcon />,
-  hamburger: <HamburgerIcon />,
   "no-js-response": <NoJSResponseIcon />,
 };
 
